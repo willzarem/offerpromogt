@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:offerpromogt/models/coupon.dart';
+import 'package:offerpromogt/pages/coupons_list.dart';
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
@@ -47,6 +49,14 @@ class _HomeState extends State<Home> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: getBottomNavigationItems(),
+        onTap: (index) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => CouponsListPage(
+                        type: CouponType.restaurant,
+                      )));
+        },
       ),
     );
   }
@@ -64,7 +74,8 @@ class _HomeState extends State<Home> {
         );
       },
       child: Container(
-        child: Image.network('https://placehold.it/600x800?text=Banner$position'),
+        child:
+            Image.network('https://placehold.it/600x800?text=Promo$position'),
       ),
     );
   }

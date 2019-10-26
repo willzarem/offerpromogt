@@ -20,7 +20,7 @@ class _LoginState extends State<Login> {
       body: Center(
         child: Container(
           alignment: Alignment.center,
-          height: 430.0,
+          height: 480.0,
           width: 250.0,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -60,12 +60,28 @@ class _LoginState extends State<Login> {
                             }),
                       ),
                       RaisedButton(
-                        color: Colors.lightGreen,
+                        color: Color(0xFF005b03),
+                        textColor: Colors.white,
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 20.0),
                         onPressed: () {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) => Home()));
                         },
-                        child: Text('Entrar'),
+                        child: Text(
+                          'Entrar',
+                          style: TextStyle(fontSize: 19.0),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Text(
+                          'Registrate',
+                          style: TextStyle(
+                              fontSize: 16.0,
+                              decoration: TextDecoration.underline,
+                              color: Colors.blue[400]),
+                        ),
                       )
                     ],
                   ),
