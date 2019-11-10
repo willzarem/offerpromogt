@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:offerpromogt/pages/login.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  initializeDateFormatting('de_DE', null);
+  return runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
