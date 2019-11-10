@@ -47,6 +47,7 @@ class Coupon {
               child: Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
                       this.title,
