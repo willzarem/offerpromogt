@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:offerpromogt/models/coupon.dart';
 import 'package:offerpromogt/pages/coupons_list.dart';
+import 'package:offerpromogt/pages/profile.dart';
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
@@ -34,7 +35,8 @@ class _HomeState extends State<Home> {
           IconButton(
             icon: Icon(Icons.person),
             color: Colors.green[900],
-            onPressed: () => print('go to profile'),
+            onPressed: () => Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ProfilePage())),
           )
         ],
       ),
