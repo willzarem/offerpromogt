@@ -3,7 +3,6 @@ import 'package:offerpromogt/pages/home.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
 class Login extends StatefulWidget {
   Login({Key key}) : super(key: key);
 
@@ -12,6 +11,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
+  final _loginScaffoldKey = GlobalKey<ScaffoldState>();
 
   static final FacebookLogin facebookSignIn = new FacebookLogin();
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
@@ -20,38 +20,43 @@ class _LoginState extends State<Login> {
 
   String _message = 'Log in/out by pressing the buttons below.';
 
-  Future<FirebaseUser> firebaseAuthWithFacebook({@required FacebookAccessToken token}) async {
-
-    AuthCredential credential= FacebookAuthProvider.getCredential(accessToken: token.token);
+  Future<FirebaseUser> firebaseAuthWithFacebook(
+      {@required FacebookAccessToken token}) async {
+    AuthCredential credential =
+        FacebookAuthProvider.getCredential(accessToken: token.token);
     AuthResult authResult = await firebaseAuth.signInWithCredential(credential);
     return authResult.user;
   }
 
   Future<void> _login() async {
     final FacebookLoginResult result =
-        await facebookSignIn.logIn(['email']);
+        await facebookSignIn.logIn(['email', 'public_profile']);
 
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
         final FacebookAccessToken accessToken = result.accessToken;
-        _showMessage('''
-         Logged in!
-         
-         Token: ${accessToken.token}
-         User id: ${accessToken.userId}
-         Expires: ${accessToken.expires}
-         Permissions: ${accessToken.permissions}
-         Declined permissions: ${accessToken.declinedPermissions}
-         ''');
-         firebaseUser = await firebaseAuthWithFacebook(token: accessToken);
-         print(_message);
+        firebaseUser = await firebaseAuthWithFacebook(token: accessToken);
+        _showMessage('Sesión iniciada: ${firebaseUser.displayName}.');
+        firestore.usersRef.document(firebaseUser.uid).setData({
+          'providerId': firebaseUser.providerId,
+          'uid': firebaseUser.uid,
+          'displayName': firebaseUser.displayName,
+          'photoUrl': firebaseUser.photoUrl,
+          'email': firebaseUser.email,
+          'phoneNumber': firebaseUser.phoneNumber,
+          'fbId': accessToken.userId,
+          'lastSignInTimestamp': DateTime.now()
+        }, merge: true);
+        userDocId = firebaseUser.uid;
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => Home()));
         break;
       case FacebookLoginStatus.cancelledByUser:
-        _showMessage('Login cancelled by the user.');
+        _showMessage('Inicio de sesión cancelado.');
         break;
       case FacebookLoginStatus.error:
-        _showMessage('Something went wrong with the login process.\n'
-            'Here\'s the error Facebook gave us: ${result.errorMessage}');
+        _showMessage('Ocurrió un error la iniciar sesión.\n'
+            '${result.errorMessage}');
         break;
     }
   }
@@ -65,6 +70,15 @@ class _LoginState extends State<Login> {
     setState(() {
       _message = message;
     });
+    _loginScaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(message, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white),),
+      duration: Duration(seconds: 5),
+      backgroundColor: Colors.grey[600],
+      behavior: SnackBarBehavior.fixed,
+    ));
+
+    print(
+        '**********************************************$message****************************************************************');
   }
 
   TextEditingController _passwordController = TextEditingController();
@@ -73,6 +87,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _loginScaffoldKey,
       backgroundColor: Colors.white,
       body: Center(
         child: Container(
@@ -91,45 +106,45 @@ class _LoginState extends State<Login> {
                   key: _formKey,
                   child: Column(
                     children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
-                        child: TextFormField(
-                            controller: _usernameController,
-                            decoration: InputDecoration(hintText: 'Usuario'),
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return 'Debe ingresar un usuario';
-                              }
-                              return null;
-                            }),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
-                        child: TextFormField(
-                            controller: _passwordController,
-                            obscureText: true,
-                            decoration: InputDecoration(hintText: 'Password'),
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return 'Debe ingresar una contraseña';
-                              }
-                              return null;
-                            }),
-                      ),
-                      RaisedButton(
-                        color: Color(0xFF005b03),
-                        textColor: Colors.white,
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 20.0),
-                        onPressed: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => Home()));
-                        },
-                        child: Text(
-                          'Entrar',
-                          style: TextStyle(fontSize: 19.0),
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(bottom: 10.0),
+                      //   child: TextFormField(
+                      //       controller: _usernameController,
+                      //       decoration: InputDecoration(hintText: 'Usuario'),
+                      //       validator: (value) {
+                      //         if (value.isEmpty) {
+                      //           return 'Debe ingresar un usuario';
+                      //         }
+                      //         return null;
+                      //       }),
+                      // ),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(bottom: 10.0),
+                      //   child: TextFormField(
+                      //       controller: _passwordController,
+                      //       obscureText: true,
+                      //       decoration: InputDecoration(hintText: 'Password'),
+                      //       validator: (value) {
+                      //         if (value.isEmpty) {
+                      //           return 'Debe ingresar una contraseña';
+                      //         }
+                      //         return null;
+                      //       }),
+                      // ),
+                      // RaisedButton(
+                      //   color: Color(0xFF005b03),
+                      //   textColor: Colors.white,
+                      //   padding: EdgeInsets.symmetric(
+                      //       vertical: 10.0, horizontal: 20.0),
+                      //   onPressed: () {
+                      //     Navigator.push(context,
+                      //         MaterialPageRoute(builder: (context) => Home()));
+                      //   },
+                      //   child: Text(
+                      //     'Entrar',
+                      //     style: TextStyle(fontSize: 19.0),
+                      //   ),
+                      // ),
                       RaisedButton(
                         color: Color(0xFF3b5998),
                         textColor: Colors.white,
@@ -137,18 +152,21 @@ class _LoginState extends State<Login> {
                             vertical: 10.0, horizontal: 20.0),
                         onPressed: _login,
                         child: Text(
-                          'Facebook',
-                          style: TextStyle(fontSize: 19.0),
+                          'Iniciar sesion con Facebook',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 19.0,
+                          ),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 20),
                         child: Text(
-                          'Registrate',
+                          'Registrate (proximamente)',
                           style: TextStyle(
                               fontSize: 16.0,
                               decoration: TextDecoration.underline,
-                              color: Colors.blue[400]),
+                              color: Colors.grey),
                         ),
                       )
                     ],
