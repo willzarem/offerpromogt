@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:offerpromogt/models/coupon.dart';
 import 'package:offerpromogt/pages/coupons_list.dart';
+import 'package:offerpromogt/pages/profile.dart';
+import 'package:offerpromogt/utils/firestore.dart';
+
+final String userDocId = 'n5cHzFOKMN0KLddc1p7w';
+final FirestoreService firestore = FirestoreService();
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
@@ -34,7 +39,8 @@ class _HomeState extends State<Home> {
           IconButton(
             icon: Icon(Icons.person),
             color: Colors.green[900],
-            onPressed: () => print('go to profile'),
+            onPressed: () => Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ProfilePage())),
           )
         ],
       ),
