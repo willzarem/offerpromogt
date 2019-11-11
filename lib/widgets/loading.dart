@@ -9,3 +9,12 @@ Widget circularProgress() {
     ),
   );
 }
+
+Widget linearProgress() {
+  return Container(
+    padding: EdgeInsets.only(top: 10.0),
+    child: LinearProgressIndicator(
+      valueColor: AlwaysStoppedAnimation(Colors.orange[900]),
+    ),
+  );
+}
