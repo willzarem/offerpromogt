@@ -26,6 +26,7 @@ dependencies:
   flutter_svg:
   flutter_datetime_picker: ^1.2.8
   intl: ^0.16.0
+  cloud_firestore: ^0.12.9+4
 
 
 dev_dependencies:
