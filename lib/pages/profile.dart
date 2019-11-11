@@ -16,9 +16,10 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  TextEditingController fullNameController = TextEditingController();
+  TextEditingController displayNameController = TextEditingController();
   TextEditingController birthDateController = TextEditingController();
   TextEditingController idNumberController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   User user;
   bool isLoading = true;
 
@@ -37,10 +38,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
       setState(() {
         this.user = userInfo;
-        this.fullNameController.text = userInfo?.fullName;
+        this.displayNameController.text = userInfo?.displayName;
         this.birthDateController.text =
             DateFormat.yMd('es').format(userInfo?.birthDate);
         this.idNumberController.text = userInfo?.idNumber;
+        this.emailController.text = userInfo?.email;
         this.isLoading = false;
       });
     }).catchError((error) {
@@ -75,12 +77,34 @@ class _ProfilePageState extends State<ProfilePage> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         Padding(
+          padding: EdgeInsets.symmetric(vertical: 20.0,),
+          child: Container(
+            alignment: Alignment.center,
+            child: CircleAvatar(
+              backgroundColor: Colors.grey,
+              radius: 100.0,
+              backgroundImage: this.user.photoUrl == null
+                  ? null
+                  : NetworkImage(this.user.photoUrl + '?height=300&width=300'),
+            ),
+          ),
+        ),
+        Padding(
           padding: EdgeInsets.all(8.0),
           child: TextField(
-            controller: fullNameController,
+            controller: displayNameController,
             decoration: InputDecoration(
-                hintText: 'Nombre completo', hasFloatingPlaceholder: false),
-            onChanged: (value) => this.user.fullName = value,
+                hintText: 'Nombre', hasFloatingPlaceholder: false),
+            onChanged: (value) => this.user.displayName = value,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.all(8.0),
+          child: TextField(
+            controller: emailController,
+            decoration: InputDecoration(
+                hintText: 'Correo electrónico', hasFloatingPlaceholder: false),
+            onChanged: (value) => this.user.email = value,
           ),
         ),
         Padding(
@@ -137,7 +161,7 @@ class _ProfilePageState extends State<ProfilePage> {
         try {
           await firestore.usersRef
               .document(userDocId)
-              .setData(this.user.toMap());
+              .setData(this.user.toMap(), merge: true);
         } catch (e) {
           print(e);
         } finally {
