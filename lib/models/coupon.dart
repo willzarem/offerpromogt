@@ -1,74 +1,95 @@
 import 'package:flutter/material.dart';
+import 'package:offerpromogt/pages/coupon.dart';
 
 class Coupon {
   int id;
   double price;
   String title;
-  CouponType type;
+  String type;
   String description;
   DateTime createdAt;
   DateTime expiresAt;
   String image;
+  String couponId;
+  String ownerName;
+  String ownerId;
 
   Coupon(
-      {this.id,
+      {this.couponId,
       this.type,
       this.title,
       this.price,
       this.image,
       this.description,
+      this.ownerName,
+      this.ownerId,
       this.createdAt,
       this.expiresAt});
 
-  factory Coupon.fromMap(Map<String, dynamic> map) => Coupon(
-      id: map['id'],
-      price: map['price'],
+  factory Coupon.fromMap(Map<String, dynamic> map, {String couponId}) => Coupon(
+      couponId: couponId,
+      price: map['price'].toDouble(),
       title: map['title'],
       type: map['type'],
       image: map['image'],
       description: map['description'],
-      createdAt: DateTime.parse(map['createdAt']),
-      expiresAt: DateTime.parse(map['expiresAt']));
+      ownerName: map['ownerName'],
+      ownerId: map['ownerId'],
+      createdAt: map['createdAt'].toDate(),
+      expiresAt: map['expiresAt'].toDate());
 
-  Widget viewAsList() {
-    return GestureDetector(
-      onTap: () => print('goto'),
-      child: Card(
-        child: Row(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Image.network(
+  Widget viewAsList(BuildContext context) {
+    return Card(
+      child: Material(
+        child: InkWell(
+          onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => CouponPage(
+                        coupon: this,
+                      ))),
+          child: Row(
+            children: <Widget>[
+              Image.network(
                 this.image,
-                height: 100.0,
+                height: 130.0,
+                width: 130.0,
+                fit: BoxFit.cover,
               ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      this.title,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14.0,
-                          color: Colors.black),
-                    ),
-                    Divider(),
-                    RichText(
-                      text: TextSpan(
-                          text: this.description,
-                          style: TextStyle(
-                              color: Colors.grey[700], fontSize: 12.0)),
-                      overflow: TextOverflow.ellipsis,
-                    )
-                  ],
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        this.title,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14.0,
+                            color: Colors.black),
+                      ),
+                      Divider(),
+                      RichText(
+                        maxLines: 2,
+                        text: TextSpan(
+                            text: this.description,
+                            style: TextStyle(
+                                color: Colors.grey[700], fontSize: 12.0)),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        '${this.ownerName}',
+                        textAlign: TextAlign.right,
+                        style: TextStyle(color: Colors.grey),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );
